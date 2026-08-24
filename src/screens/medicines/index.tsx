@@ -64,7 +64,7 @@ export function MedicinesScreen({ babyId }: { babyId: string }) {
             </View>
 
             {!medicines ? (
-              <Text className="text-sm text-ink-soft dark:text-[#9B97AB]">Loading…</Text>
+              <Text className="text-sm text-ink-soft dark:text-[#9C937F]">Loading…</Text>
             ) : medicines.length === 0 ? (
               <EmptyState
                 icon={AlarmClock}
@@ -79,10 +79,10 @@ export function MedicinesScreen({ babyId }: { babyId: string }) {
                     <Card key={med.id} className="p-4">
                       <View className="flex-row items-center gap-3">
                         <View className="flex-1">
-                          <Text className="text-base font-semibold text-ink dark:text-[#EDEBF4]">
+                          <Text className="text-base font-semibold text-ink dark:text-[#EFEAE0]">
                             {med.name}
                           </Text>
-                          <Text className="mt-0.5 text-xs text-ink-soft dark:text-[#9B97AB]">
+                          <Text className="mt-0.5 text-xs text-ink-soft dark:text-[#9C937F]">
                             {med.dosage} {med.unit} · {med.form}
                             {todayCount > 0 ? ` · ${todayCount} given today` : ''}
                           </Text>
@@ -134,13 +134,13 @@ export function MedicinesScreen({ babyId }: { babyId: string }) {
           const medName =
             (medicines ?? []).find((m) => m.id === dose.medicineId)?.name ?? 'Medicine';
           return (
-            <View className="mb-2 flex-row items-center gap-3 rounded-2xl border border-line bg-card px-3.5 py-3 dark:border-[#35323F] dark:bg-[#26242F]">
+            <View className="mb-2 flex-row items-center gap-3 rounded-2xl border border-line bg-card px-3.5 py-3 dark:border-[#38332B] dark:bg-[#26221D]">
               <Pill size={16} color="#F2A7B3" />
-              <Text className="flex-1 text-sm text-ink dark:text-[#EDEBF4]" numberOfLines={1}>
+              <Text className="flex-1 text-sm text-ink dark:text-[#EFEAE0]" numberOfLines={1}>
                 {medName} · {dose.amount}
                 {dose.note ? ` · ${dose.note}` : ''}
               </Text>
-              <Text className="text-xs text-ink-soft dark:text-[#9B97AB]">
+              <Text className="text-xs text-ink-soft dark:text-[#9C937F]">
                 {formatDayLabel(dose.timestamp)} {formatTime(dose.timestamp)}
               </Text>
             </View>
@@ -148,7 +148,7 @@ export function MedicinesScreen({ babyId }: { babyId: string }) {
         }}
         ListEmptyComponent={
           medicines && medicines.length > 0 ? (
-            <Text className="text-sm text-ink-soft dark:text-[#9B97AB]">
+            <Text className="text-sm text-ink-soft dark:text-[#9C937F]">
               No doses logged yet.
             </Text>
           ) : null

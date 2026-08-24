@@ -22,7 +22,7 @@ export function StatCard({
 }: StatCardProps) {
   return (
     <View
-      className={`flex-1 rounded-2xl border border-line bg-card p-3 dark:border-[#35323F] dark:bg-[#26242F] ${className}`}
+      className={`flex-1 rounded-2xl border border-line bg-card p-3 dark:border-[#38332B] dark:bg-[#26221D] ${className}`}
     >
       <View className="flex-row items-center gap-2">
         {Icon ? (
@@ -30,11 +30,11 @@ export function StatCard({
             <Icon size={16} color={accentHex[accent]} />
           </View>
         ) : null}
-        <Text className="text-xs font-medium text-ink-soft dark:text-[#9B97AB]">{label}</Text>
+        <Text className="text-xs font-medium text-ink-soft dark:text-[#9C937F]">{label}</Text>
       </View>
-      <Text className="mt-2 text-xl font-bold text-ink dark:text-[#EDEBF4]">{value}</Text>
+      <Text className="mt-2 text-xl font-bold text-ink dark:text-[#EFEAE0]">{value}</Text>
       {sublabel ? (
-        <Text className="mt-0.5 text-xs text-ink-soft dark:text-[#9B97AB]" numberOfLines={1}>
+        <Text className="mt-0.5 text-xs text-ink-soft dark:text-[#9C937F]" numberOfLines={1}>
           {sublabel}
         </Text>
       ) : null}

@@ -11,7 +11,7 @@ interface CardProps {
 
 export function Card({ children, className = '', onPress, accessibilityLabel }: CardProps) {
   const base =
-    'bg-card dark:bg-[#26242F] rounded-2xl border border-line dark:border-[#35323F]';
+    'bg-card dark:bg-[#26221D] rounded-2xl border border-line dark:border-[#38332B]';
   if (onPress) {
     return (
       <Pressable

@@ -9,7 +9,8 @@ import {
   Field,
   TextField,
 } from '@/components/ui';
-import { createDiaper } from '@/db/diapers';
+import { createDiaper, deleteDiaper } from '@/db/diapers';
+import { useToastStore } from '@/stores/toast';
 import { error as hapticError, success, tap } from '@/utils/haptics';
 
 export interface LogFormProps {
@@ -44,7 +45,7 @@ export function DiaperLogForm({ babyId, onDone }: LogFormProps) {
     }
     setSaving(true);
     try {
-      await createDiaper({
+      const record = {
         id: `dia-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
         babyId,
         timestamp: timestamp.toISOString(),
@@ -52,8 +53,12 @@ export function DiaperLogForm({ babyId, onDone }: LogFormProps) {
         dirty,
         consistency: dirty && consistency.trim() ? consistency.trim() : undefined,
         note: note.trim() || undefined,
-      });
+      } satisfies Parameters<typeof createDiaper>[0];
+      await createDiaper(record);
       void success();
+      useToastStore.getState().show('Nappy logged', async () => {
+        await deleteDiaper(record.id);
+      });
       onDone();
     } catch (e) {
       void hapticError();

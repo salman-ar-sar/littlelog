@@ -126,7 +126,7 @@ export function MedicineEditor({ babyId, medicine, onClose }: Props) {
     <Modal visible animationType="slide" onRequestClose={onClose}>
       <Screen>
         <View className="mb-3 flex-row items-center justify-between">
-          <Text className="text-xl font-bold text-ink dark:text-[#EDEBF4]">
+          <Text className="text-xl font-bold text-ink dark:text-[#EFEAE0]">
             {medicine ? 'Edit medicine' : 'Add medicine'}
           </Text>
           <Pressable
@@ -219,7 +219,7 @@ export function MedicineEditor({ babyId, medicine, onClose }: Props) {
                   onPress={() => setTimePickerOpen(false)}
                   className="mt-1 self-end rounded-full bg-black/5 px-4 py-2 active:opacity-60 dark:bg-white/10"
                 >
-                  <Text className="text-sm font-semibold text-ink-soft dark:text-[#9B97AB]">Done</Text>
+                  <Text className="text-sm font-semibold text-ink-soft dark:text-[#9C937F]">Done</Text>
                 </Pressable>
               ) : null}
             </>

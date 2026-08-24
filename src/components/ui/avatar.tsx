@@ -23,7 +23,7 @@ export function Avatar({ uri, name, size = 40 }: AvatarProps) {
   if (uri) {
     return (
       <View
-        className="overflow-hidden border border-line dark:border-[#35323F]"
+        className="overflow-hidden border border-line dark:border-[#38332B]"
         style={style}
       >
         <Image source={{ uri }} contentFit="cover" style={{ width: '100%', height: '100%' }} />
@@ -35,7 +35,7 @@ export function Avatar({ uri, name, size = 40 }: AvatarProps) {
   return (
     <View
       accessibilityLabel={`${name} avatar`}
-      className="items-center justify-center border border-line dark:border-[#35323F]"
+      className="items-center justify-center border border-line dark:border-[#38332B]"
       style={[style, { backgroundColor: bg }]}
     >
       <Text style={{ fontSize: size * 0.38 }} className="font-bold text-white">

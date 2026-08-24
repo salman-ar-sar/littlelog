@@ -30,17 +30,17 @@ export function ProfileSwitcher() {
         <Avatar uri={active?.photoUri} name={active?.name ?? 'Add'} size={44} />
         <View className="flex-1">
           <View className="flex-row items-center gap-1">
-            <Text className="text-lg font-bold text-ink dark:text-[#EDEBF4]" numberOfLines={1}>
+            <Text className="text-lg font-bold text-ink dark:text-[#EFEAE0]" numberOfLines={1}>
               {active?.name ?? 'Add a baby'}
             </Text>
             <ChevronDown size={16} color="#8A8699" />
           </View>
           {active ? (
-            <Text className="text-xs text-ink-soft dark:text-[#9B97AB]">
+            <Text className="text-xs text-ink-soft dark:text-[#9C937F]">
               {formatAge(active.dateOfBirth)}
             </Text>
           ) : (
-            <Text className="text-xs text-ink-soft dark:text-[#9B97AB]">Tap here to start</Text>
+            <Text className="text-xs text-ink-soft dark:text-[#9C937F]">Tap here to start</Text>
           )}
         </View>
       </Pressable>
@@ -53,7 +53,7 @@ export function ProfileSwitcher() {
             onPress={() => setOpen(false)}
             className="absolute -inset-24 z-10"
           />
-          <View className="absolute left-0 right-0 top-full z-20 mt-2 rounded-2xl border border-line bg-card p-2 shadow-lg dark:border-[#35323F] dark:bg-[#26242F]">
+          <View className="absolute left-0 right-0 top-full z-20 mt-2 rounded-2xl border border-line bg-card p-2 shadow-lg dark:border-[#38332B] dark:bg-[#26221D]">
             {babies.map((baby) => {
               const isActive = baby.id === (active?.id ?? null);
               return (
@@ -69,10 +69,10 @@ export function ProfileSwitcher() {
                 >
                   <Avatar uri={baby.photoUri} name={baby.name} size={32} />
                   <View className="flex-1">
-                    <Text className="text-sm font-semibold text-ink dark:text-[#EDEBF4]">
+                    <Text className="text-sm font-semibold text-ink dark:text-[#EFEAE0]">
                       {baby.name}
                     </Text>
-                    <Text className="text-xs text-ink-soft dark:text-[#9B97AB]">
+                    <Text className="text-xs text-ink-soft dark:text-[#9C937F]">
                       {formatAge(baby.dateOfBirth)}
                     </Text>
                   </View>
@@ -80,7 +80,7 @@ export function ProfileSwitcher() {
                 </Pressable>
               );
             })}
-            <View className="my-1 h-px bg-line dark:bg-[#35323F]" />
+            <View className="my-1 h-px bg-line dark:bg-[#38332B]" />
             <SwitcherAction
               label="Edit profile"
               icon={<Settings2 size={16} color="#8A8699" />}
@@ -121,7 +121,7 @@ function SwitcherAction({
       className="min-h-[48px] flex-row items-center gap-2 rounded-xl px-3 active:bg-black/5 dark:active:bg-white/10"
     >
       {icon}
-      <Text className="text-sm text-ink dark:text-[#EDEBF4]">{label}</Text>
+      <Text className="text-sm text-ink dark:text-[#EFEAE0]">{label}</Text>
     </Pressable>
   );
 }

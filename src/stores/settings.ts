@@ -7,9 +7,13 @@ type SettingsState = {
   weightUnit: WeightUnit;
   volumeUnit: VolumeUnit;
   remindersEnabled: boolean;
+  nightfeedMode: boolean;
+  hapticConfirm: boolean;
   setWeightUnit: (u: WeightUnit) => void;
   setVolumeUnit: (u: VolumeUnit) => void;
   setRemindersEnabled: (b: boolean) => void;
+  setNightfeedMode: (b: boolean) => void;
+  setHapticConfirm: (b: boolean) => void;
 };
 
 export const useSettingsStore = create<SettingsState>()(
@@ -18,9 +22,13 @@ export const useSettingsStore = create<SettingsState>()(
       weightUnit: 'kg',
       volumeUnit: 'ml',
       remindersEnabled: true,
+      nightfeedMode: false,
+      hapticConfirm: true,
       setWeightUnit: (weightUnit) => set({ weightUnit }),
       setVolumeUnit: (volumeUnit) => set({ volumeUnit }),
       setRemindersEnabled: (remindersEnabled) => set({ remindersEnabled }),
+  setNightfeedMode: (nightfeedMode) => set({ nightfeedMode }),
+  setHapticConfirm: (hapticConfirm) => set({ hapticConfirm }),
     }),
     {
       name: 'littlelog-settings',

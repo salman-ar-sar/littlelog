@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 import { LineChart } from 'react-native-gifted-charts';
 import { Scale } from 'lucide-react-native';
@@ -10,15 +10,17 @@ import { formatWeight, weightToDisplay } from '@/utils/units';
 import { useSettingsStore } from '@/stores/settings';
 
 /** Growth trend line chart + last/first summary cards. */
-export function WeightSection({ babyId }: { babyId: string }) {
+export function WeightSection({ babyId, days = 365 }: { babyId: string; days?: number }) {
+  const [nowMs] = useState(() => Date.now());
   const unit = useSettingsStore((s) => s.weightUnit);
   const entries = useDbQuery(`weights:${babyId}`, () => listWeights(babyId));
   const baby = useDbQuery(`baby:${babyId}`, () => getBaby(babyId));
 
   const series = useMemo(() => {
     if (!entries) return null;
-    // Chronological ascending for the chart.
-    const asc = [...entries].reverse();
+    const cutoff = nowMs - days * 86_400_000;
+    // Chronological ascending for the chart, bounded by the range.
+    const asc = [...entries].filter((e) => new Date(e.timestamp).getTime() >= cutoff).reverse();
     const points: { value: number; label: string; grams: number; iso: string }[] = [];
     if (baby?.birthWeightGrams) {
       const d = new Date(baby.dateOfBirth);
@@ -39,7 +41,7 @@ export function WeightSection({ babyId }: { babyId: string }) {
       });
     }
     return points;
-  }, [entries, baby, unit]);
+  }, [entries, baby, unit, days, nowMs]);
 
   if (!entries || !series) return null;
 

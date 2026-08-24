@@ -2,19 +2,15 @@ import { useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 import { BarChart } from 'react-native-gifted-charts';
 import { MoonStar } from 'lucide-react-native';
-import { Card, SectionTitle, SegmentedControl, StatCard } from '@/components/ui';
+import { Card, SectionTitle, StatCard } from '@/components/ui';
 import { useDbQuery } from '@/db/queries';
 import { listSleep } from '@/db/sleep';
 import { startOfLocalDay } from '@/utils/datetime';
 
-type Range = '7' | '30';
 
 /** Sleep per day bar chart (last 7/30 days) + stat cards. */
-export function SleepSection({ babyId }: { babyId: string }) {
-  const [range, setRange] = useState<Range>('7');
+export function SleepSection({ babyId, days = 7 }: { babyId: string; days?: number }) {
   const entries = useDbQuery(`sleep:${babyId}`, () => listSleep(babyId));
-
-  const days = Number(range);
   const [nowMs] = useState(() => Date.now());
 
   const chart = useMemo(() => {
@@ -63,17 +59,8 @@ export function SleepSection({ babyId }: { babyId: string }) {
 
   return (
     <View className="mb-5">
-      <View className="mb-2 flex-row items-center justify-between">
+      <View className="mb-2">
         <SectionTitle>Sleep per day</SectionTitle>
-        <SegmentedControl<Range>
-          value={range}
-          onChange={setRange}
-          options={[
-            { value: '7', label: '7d' },
-            { value: '30', label: '30d' },
-          ]}
-          className="w-28"
-        />
       </View>
 
       <Card className="p-4">

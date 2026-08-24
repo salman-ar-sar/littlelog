@@ -45,7 +45,7 @@ const chipSelected: Record<AccentColor, string> = {
 };
 
 const chipIdle =
-  'bg-card border-line dark:bg-[#26242F] dark:border-[#35323F]';
+  'bg-card border-line dark:bg-[#26221D] dark:border-[#38332B]';
 
 const chipText: Record<AccentColor, string> = {
   blush: 'text-blush',
@@ -56,4 +56,4 @@ const chipText: Record<AccentColor, string> = {
   lavender: 'text-lavender',
 };
 
-const chipTextIdle = 'text-ink-soft dark:text-[#9B97AB]';
+const chipTextIdle = 'text-ink-soft dark:text-[#9C937F]';

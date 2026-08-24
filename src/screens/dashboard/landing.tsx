@@ -1,78 +1,56 @@
 import { Pressable, ScrollView, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import {
-  ArrowRight,
-  Baby,
-  BellRing,
-  ChartSpline,
-  Milk,
-} from 'lucide-react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-const FEATURES = [
-  { icon: Milk, color: '#F0A47E', soft: '#FDEFE5', title: 'Feeds & sleep', body: 'One-tap timers for nursing and naps — even mid-night.' },
-  { icon: Baby, color: '#79C4A4', soft: '#E6F4ED', title: 'Diapers & baths', body: 'Track wet, dirty, and bath days without typing.' },
-  { icon: ChartSpline, color: '#EFC368', soft: '#FBF2DF', title: 'Growth & trends', body: 'Weight charts and daily insights as they grow.' },
-  { icon: BellRing, color: '#F2A7B3', soft: '#FDEEF0', title: 'Medicine reminders', body: 'Daily schedules that tap straight to “given”.' },
-];
-
-/** Branded landing page shown before any baby profile exists. */
+/** Editorial onboarding — abstract arcs and dots, one promise, one action. */
 export function LandingScreen() {
   const router = useRouter();
 
   return (
-    <SafeAreaView
-      edges={['top']}
-      className="flex-1 bg-paper dark:bg-[#1C1B22]"
-    >
+    <SafeAreaView edges={['top']} className="flex-1 bg-paper dark:bg-[#1B1916]">
       <ScrollView
-        contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 48 }}
+        contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 48 }}
         showsVerticalScrollIndicator={false}
       >
-        <View className="items-center pt-10">
-        <View className="h-36 w-36 items-center justify-center rounded-full border border-line bg-card dark:border-[#35323F] dark:bg-[#26242F]">
-          <View className="absolute -left-2 top-6 h-8 w-8 rounded-full bg-peach-soft" />
-          <View className="absolute -right-1 bottom-7 h-10 w-10 rounded-full bg-mint-soft" />
-          <View className="absolute right-8 -top-1 h-6 w-6 rounded-full bg-sky-soft" />
-          <Text className="text-6xl">🍼</Text>
+        <View className="items-center pt-16">
+          <View className="h-52 w-52 items-center justify-center">
+            <View className="absolute h-52 w-52 rounded-full border-[6px] border-peach/70" />
+            <View className="absolute h-40 w-40 rounded-full border-2 border-line dark:border-[#38332B]" />
+            <View
+              className="absolute h-52 w-52 rounded-full border-[6px] border-lavender/70"
+              style={{ borderTopColor: 'transparent', borderLeftColor: 'transparent' }}
+            />
+            <View className="absolute h-28 w-28 rounded-full bg-card dark:bg-[#26221D]" />
+            <View className="absolute -right-1 top-8 h-3 w-3 rounded-full bg-mint" />
+            <View className="absolute -left-2 bottom-16 h-2.5 w-2.5 rounded-full bg-butter" />
+            <View className="absolute bottom-24 left-16 h-2 w-2 rounded-full bg-blush" />
+            <View className="h-4 w-4 rounded-full bg-peach" />
+          </View>
         </View>
 
-        <Text className="mt-6 text-4xl font-bold text-ink dark:text-[#EDEBF4]">LittleLog</Text>
-        <Text className="mt-2 text-center text-base text-ink-soft dark:text-[#9B97AB]">
-          Every feed, nap, diaper and dose —{'\n'}logged in one tap, kept private.
+        <Text className="mt-12 font-display-semibold text-[34px] leading-[40px] text-ink dark:text-[#EFEAE0]">
+          {'A quiet record\nof the small hours.'}
         </Text>
-      </View>
 
-      <View style={{ rowGap: 14 }} className="mt-10">
-        {FEATURES.map((f) => (
-          <View
-            key={f.title}
-            className="flex-row items-center gap-4 rounded-2xl border border-line bg-card p-4 dark:border-[#35323F] dark:bg-[#26242F]"
-          >
-            <View className="h-12 w-12 items-center justify-center rounded-full" style={{ backgroundColor: f.soft }}>
-              <f.icon size={22} color={f.color} />
-            </View>
-            <View className="flex-1">
-              <Text className="text-sm font-semibold text-ink dark:text-[#EDEBF4]">{f.title}</Text>
-              <Text className="mt-0.5 text-xs text-ink-soft dark:text-[#9B97AB]">{f.body}</Text>
-            </View>
-          </View>
-        ))}
-      </View>
+        <Text className="mt-4 text-base leading-6 text-ink-soft dark:text-[#9C937F]">
+          Feeds, sleep, nappies — logged in one thumb tap, and never a streak or a badge in
+          sight.
+        </Text>
 
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel="Create baby profile"
-        onPress={() => router.push('/baby/new/edit')}
-        className="mt-10 min-h-[56px] flex-row items-center justify-center gap-2 rounded-2xl bg-peach py-4 active:opacity-80"
-      >
-        <Text className="text-lg font-semibold text-white">Get started</Text>
-        <ArrowRight size={18} color="#FFFFFF" />
-      </Pressable>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Add your baby"
+          onPress={() => router.push('/baby/new/edit')}
+          className="mt-10 min-h-[56px] items-center justify-center rounded-xl bg-ink active:opacity-80 dark:bg-[#EFEAE0]"
+        >
+          <Text className="text-base font-sans-semibold text-paper dark:text-[#1B1916]">
+            Add your baby
+          </Text>
+        </Pressable>
 
-      <Text className="mt-5 text-center text-xs text-ink-soft dark:text-[#9B97AB]">
-        Offline-first · no account needed · your data never leaves this device
-      </Text>
+        <Text className="mt-6 text-center text-xs text-ink-soft dark:text-[#9C937F]">
+          Offline-first · no account needed
+        </Text>
       </ScrollView>
     </SafeAreaView>
   );

@@ -7,7 +7,8 @@ import {
   Field,
   TextField,
 } from '@/components/ui';
-import { createBath } from '@/db/baths';
+import { createBath, deleteBath } from '@/db/baths';
+import { useToastStore } from '@/stores/toast';
 import { error as hapticError, success } from '@/utils/haptics';
 import type { LogFormProps } from './diaper-form';
 
@@ -19,13 +20,17 @@ export function BathLogForm({ babyId, onDone }: LogFormProps) {
   const save = async () => {
     setSaving(true);
     try {
-      await createBath({
+      const record = {
         id: `bth-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
         babyId,
         timestamp: timestamp.toISOString(),
         note: note.trim() || undefined,
-      });
+      } satisfies Parameters<typeof createBath>[0];
+      await createBath(record);
       void success();
+      useToastStore.getState().show('Bath logged', async () => {
+        await deleteBath(record.id);
+      });
       onDone();
     } catch (e) {
       void hapticError();

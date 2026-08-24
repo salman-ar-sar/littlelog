@@ -28,7 +28,7 @@ export function SegmentedControl<T extends string>({
     >
       <View
         pointerEvents="none"
-        className="absolute inset-y-1 rounded-lg bg-card dark:bg-[#3A3745]"
+        className="absolute inset-y-1 rounded-lg bg-card dark:bg-[#3B362E]"
         style={{ width: `${widthPct}%`, left: `${index * widthPct}%` }}
       />
       {options.map((option) => {
@@ -49,7 +49,7 @@ export function SegmentedControl<T extends string>({
           >
             <Text
               className={`text-sm font-medium ${
-                active ? 'text-ink dark:text-[#EDEBF4]' : 'text-ink-soft dark:text-[#9B97AB]'
+                active ? 'text-ink dark:text-[#EFEAE0]' : 'text-ink-soft dark:text-[#9C937F]'
               }`}
             >
               {option.label}

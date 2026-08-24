@@ -8,7 +8,8 @@ import {
   NumberField,
   TextField,
 } from '@/components/ui';
-import { createWeight } from '@/db/weights';
+import { createWeight, deleteWeight } from '@/db/weights';
+import { useToastStore } from '@/stores/toast';
 import { parseWeightToGrams } from '@/utils/units';
 import { useSettingsStore } from '@/stores/settings';
 import { error as hapticError, success } from '@/utils/haptics';
@@ -28,14 +29,18 @@ export function WeightLogForm({ babyId, onDone }: LogFormProps) {
     }
     setSaving(true);
     try {
-      await createWeight({
+      const record = {
         id: `wgt-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
         babyId,
         timestamp: timestamp.toISOString(),
         weightGrams: parseWeightToGrams(value, weightUnit),
         note: note.trim() || undefined,
-      });
+      } satisfies Parameters<typeof createWeight>[0];
+      await createWeight(record);
       void success();
+      useToastStore.getState().show('Weight logged', async () => {
+        await deleteWeight(record.id);
+      });
       onDone();
     } catch (e) {
       void hapticError();

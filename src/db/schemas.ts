@@ -25,7 +25,7 @@ export const weightEntrySchema = z.object({
   note: z.string().optional(),
 });
 
-export const feedingModeSchema = z.enum(['breast', 'bottle']);
+export const feedingModeSchema = z.enum(['breast', 'bottle', 'solids']);
 export const feedingSideSchema = z.enum(['left', 'right', 'both']);
 export const bottleTypeSchema = z.enum(['breast_milk', 'formula', 'mixed']);
 
@@ -43,9 +43,11 @@ export const feedingEntrySchema = z
   })
   .refine(
     (v) =>
-      v.mode === 'breast'
-        ? v.side !== undefined || v.durationSeconds !== undefined
-        : v.amountMl !== undefined,
+      v.mode === 'solids'
+        ? true
+        : v.mode === 'breast'
+          ? v.side !== undefined || v.durationSeconds !== undefined
+          : v.amountMl !== undefined,
     { message: 'Breast feeds need side/duration; bottle feeds need amount' },
   );
 

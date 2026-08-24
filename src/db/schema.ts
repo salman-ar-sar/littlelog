@@ -83,6 +83,24 @@ export const MIGRATIONS: Record<number, string[]> = {
     );`,
     `CREATE INDEX IF NOT EXISTS idx_doses_baby_ts ON medicine_dose_entries (baby_id, timestamp DESC);`,
   ],
+  2: [
+    `CREATE TABLE feeding_entries_v2 (
+      id TEXT PRIMARY KEY NOT NULL,
+      baby_id TEXT NOT NULL REFERENCES babies(id) ON DELETE CASCADE,
+      timestamp TEXT NOT NULL,
+      mode TEXT NOT NULL CHECK (mode IN ('breast','bottle','solids')),
+      side TEXT CHECK (side IN ('left','right','both')),
+      duration_seconds INTEGER,
+      amount_ml REAL,
+      bottle_type TEXT CHECK (bottle_type IN ('breast_milk','formula','mixed')),
+      note TEXT
+    );`,
+    `INSERT INTO feeding_entries_v2 (id, baby_id, timestamp, mode, side, duration_seconds, amount_ml, bottle_type, note)
+     SELECT id, baby_id, timestamp, mode, side, duration_seconds, amount_ml, bottle_type, note FROM feeding_entries;`,
+    `DROP TABLE feeding_entries;`,
+    `ALTER TABLE feeding_entries_v2 RENAME TO feeding_entries;`,
+    `CREATE INDEX IF NOT EXISTS idx_feeding_baby_ts ON feeding_entries (baby_id, timestamp DESC);`,
+  ],
 };
 
 export const LATEST_SCHEMA_VERSION = Math.max(...Object.keys(MIGRATIONS).map(Number));

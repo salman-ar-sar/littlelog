@@ -50,3 +50,20 @@ export function wholeCalendarMonths(dob: Date, now: Date): number {
 function daysInMonth(year: number, monthIndex: number): number {
   return new Date(year, monthIndex + 1, 0).getDate();
 }
+
+/** Age without the "old" suffix — "6 weeks", "1 yr 2 mo". */
+export function ageShort(dobISO: string, now: Date = new Date()): string {
+  const full = formatAge(dobISO, now);
+  return full.replace(/ old$/, '');
+}
+
+/** 1-based day of life — birth day is day 1. */
+export function dayNumber(dobISO: string, now: Date = new Date()): number {
+  const dob = new Date(dobISO);
+  const start = new Date(dob.getFullYear(), dob.getMonth(), dob.getDate());
+  return Math.max(1, Math.floor((startOfToday(now).getTime() - start.getTime()) / 86_400_000) + 1);
+}
+
+function startOfToday(now: Date): Date {
+  return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+}

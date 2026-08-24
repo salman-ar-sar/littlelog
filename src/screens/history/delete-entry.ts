@@ -5,6 +5,7 @@ import { deleteDose } from '@/db/doses';
 import { deleteFeeding } from '@/db/feedings';
 import { deleteSleep } from '@/db/sleep';
 import { deleteWeight } from '@/db/weights';
+
 export async function deleteEntry(item: TimelineItem): Promise<void> {
   switch (item.kind) {
     case 'feed':
@@ -27,4 +28,3 @@ export async function deleteEntry(item: TimelineItem): Promise<void> {
       break;
   }
 }
-

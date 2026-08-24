@@ -21,7 +21,7 @@ export function NumberField({ value, onChangeValue, suffix, placeholder }: Numbe
   };
 
   return (
-    <View className="h-12 flex-row items-center rounded-xl border border-line bg-card px-3 dark:border-[#35323F] dark:bg-[#26242F]">
+    <View className="h-12 flex-row items-center rounded-xl border border-line bg-card px-3 dark:border-[#38332B] dark:bg-[#26221D]">
       <TextInput
         accessibilityLabel={placeholder}
         keyboardType="decimal-pad"
@@ -29,10 +29,10 @@ export function NumberField({ value, onChangeValue, suffix, placeholder }: Numbe
         onChangeText={handleChange}
         placeholder={placeholder ?? '0'}
         placeholderTextColor="#8A8699"
-        className="flex-1 text-base text-ink dark:text-[#EDEBF4]"
+        className="flex-1 text-base text-ink dark:text-[#EFEAE0]"
       />
       {suffix ? (
-        <Text className="ml-2 text-sm font-medium text-ink-soft dark:text-[#9B97AB]">{suffix}</Text>
+        <Text className="ml-2 text-sm font-medium text-ink-soft dark:text-[#9C937F]">{suffix}</Text>
       ) : null}
     </View>
   );

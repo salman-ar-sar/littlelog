@@ -44,7 +44,7 @@ export default function LogModal() {
   return (
     <Screen>
       <View className="mb-3 flex-row items-center justify-between">
-        <Text className="text-xl font-bold text-ink dark:text-[#EDEBF4]">
+        <Text className="text-xl font-bold text-ink dark:text-[#EFEAE0]">
           {TITLES[type] ?? 'Log'}
         </Text>
         <Pressable

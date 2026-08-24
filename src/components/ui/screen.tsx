@@ -8,7 +8,7 @@ export function Screen({ className = '', children, ...props }: ScreenProps) {
     <SafeAreaView
       {...props}
       edges={['top']}
-      className={`flex-1 bg-paper px-4 dark:bg-[#1C1B22] ${className}`}
+      className={`flex-1 bg-paper px-4 dark:bg-[#1B1916] ${className}`}
     >
       {children}
     </SafeAreaView>

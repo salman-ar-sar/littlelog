@@ -74,7 +74,7 @@ function StartSleepCard() {
           startSleep();
         }}
       />
-      <Text className="text-center text-xs text-ink-soft dark:text-[#9B97AB]">
+      <Text className="text-center text-xs text-ink-soft dark:text-[#9C937F]">
         The timer keeps running even if you close the app.
       </Text>
     </View>

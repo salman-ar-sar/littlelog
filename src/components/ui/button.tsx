@@ -8,12 +8,12 @@ export type ButtonSize = 'sm' | 'md' | 'lg';
 const VARIANT: Record<ButtonVariant, { container: string; label: string }> = {
   primary: { container: 'bg-peach', label: 'text-white' },
   secondary: {
-    container: 'bg-blush-soft dark:bg-[#2A2833] border border-blush',
-    label: 'text-ink dark:text-[#EDEBF4]',
+    container: 'bg-blush-soft dark:bg-[#2B2721] border border-blush',
+    label: 'text-ink dark:text-[#EFEAE0]',
   },
   ghost: {
-    container: 'bg-transparent border border-line dark:border-[#35323F]',
-    label: 'text-ink dark:text-[#EDEBF4]',
+    container: 'bg-transparent border border-line dark:border-[#38332B]',
+    label: 'text-ink dark:text-[#EFEAE0]',
   },
   danger: { container: 'bg-blush', label: 'text-white' },
 };

@@ -45,9 +45,18 @@ export function useDbQuery<T>(key: string, fn: () => Promise<T>): T | undefined 
 
 /* ------------------------------- Today snapshot ------------------------------ */
 
+export interface LastFeedDetail {
+  at: string;
+  mode: 'breast' | 'bottle' | 'solids';
+  side?: string;
+  durationSeconds?: number;
+  amountMl?: number;
+}
+
 export type TodaySnapshot = {
   feeds: { count: number; totalMl: number; totalBreastSeconds: number };
-  diapers: { wet: number; dirty: number; lastChangeAt: string | null };
+  lastFeed: LastFeedDetail | null;
+  diapers: { changes: number; wet: number; dirty: number; lastChangeAt: string | null };
   lastBathAt: string | null;
   lastFeedAt: string | null;
   lastWeightGrams: number | null;
@@ -111,9 +120,21 @@ function computeSnapshot(all: AllLists, now: Date): TodaySnapshot {
     if (s.type === 'nap' && inDay(s.startTime)) napCount += 1;
   }
 
+  const lastFeedEntry = all.feeds[0];
+  const lastFeed: LastFeedDetail | null = lastFeedEntry
+    ? {
+        at: lastFeedEntry.timestamp,
+        mode: lastFeedEntry.mode,
+        side: lastFeedEntry.side,
+        durationSeconds: lastFeedEntry.durationSeconds,
+        amountMl: lastFeedEntry.amountMl,
+      }
+    : null;
+
   return {
     feeds: { count: feedsToday.length, totalMl, totalBreastSeconds },
-    diapers: { wet, dirty, lastChangeAt: lastChange },
+    lastFeed,
+    diapers: { changes: diapersToday.length, wet, dirty, lastChangeAt: lastChange },
     lastBathAt: all.baths[0]?.timestamp ?? null,
     lastFeedAt: all.feeds[0]?.timestamp ?? null,
     lastWeightGrams: all.weights[0]?.weightGrams ?? null,

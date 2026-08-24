@@ -12,7 +12,8 @@ import {
   TextField,
 } from '@/components/ui';
 import { listMedicines } from '@/db/medicines';
-import { createDose } from '@/db/doses';
+import { createDose, deleteDose } from '@/db/doses';
+import { useToastStore } from '@/stores/toast';
 import type { Medicine } from '@/db/types';
 import { error as hapticError, success } from '@/utils/haptics';
 import type { LogFormProps } from './diaper-form';
@@ -62,15 +63,19 @@ export function DoseForm({ babyId, onDone }: LogFormProps) {
     }
     setSaving(true);
     try {
-      await createDose({
+      const record = {
         id: `dos-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
         babyId,
         medicineId: med.id,
         timestamp: timestamp.toISOString(),
         amount,
         note: note.trim() || undefined,
-      });
+      } satisfies Parameters<typeof createDose>[0];
+      await createDose(record);
       void success();
+      useToastStore.getState().show('Dose logged', async () => {
+        await deleteDose(record.id);
+      });
       onDone();
     } catch (e) {
       void hapticError();

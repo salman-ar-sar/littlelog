@@ -11,9 +11,9 @@ interface FieldProps {
 export function Field({ label, hint, children }: FieldProps) {
   return (
     <View className="gap-1.5">
-      <Text className="text-sm font-semibold text-ink dark:text-[#EDEBF4]">{label}</Text>
+      <Text className="text-sm font-semibold text-ink dark:text-[#EFEAE0]">{label}</Text>
       {children}
-      {hint ? <Text className="text-xs text-ink-soft dark:text-[#9B97AB]">{hint}</Text> : null}
+      {hint ? <Text className="text-xs text-ink-soft dark:text-[#9C937F]">{hint}</Text> : null}
     </View>
   );
 }
