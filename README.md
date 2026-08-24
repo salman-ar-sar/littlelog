@@ -1,56 +1,196 @@
-# Welcome to your Expo app 👋
+# LittleLog 🍼
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A warm, offline-first **baby routine tracker** built with Expo. Log feeds, sleep,
+diapers, baths, weight and medicines in one tap, review trends, and manage
+reminders — everything stored locally on device, no backend required.
 
-## Get started
+## Features
 
-1. Install dependencies
+- **Multi-baby profiles** (twins welcome) with a header profile switcher and
+  natural age display ("3 days old" → "6 weeks old" → "4 months old" → "1 yr 2 mo old")
+- **Quick-log dashboard**: 6 tracker cards with live "last logged" summaries +
+  a "Today" timeline grouped by hour (long-press any history row to edit/delete)
+- **Feeding** — breast (per-side stopwatch with pause/switch sides, survives app
+  restarts) or bottle (amount + breast milk / formula / mixed)
+- **Sleep** — start/stop timer or manual entry, auto nap/night classification,
+  7/30-day bar chart, nap count & longest stretch stats
+- **Weight** — growth line chart (birth weight included) with kg/lb unit toggle
+- **Diaper & Bath** — one-tap wet/dirty chips, consistency notes, last-bath summary
+- **Medicines** — per-baby medicine list, dose logging, daily reminder schedules via
+  local notifications; tapping a reminder deep-links into "mark as given"
+- **Settings** — kg/lb + ml/oz units, reminder master switch, CSV/JSON export via
+  the share sheet, light/dark mode
 
-   ```bash
-   npm install
-   ```
+## Stack
 
-2. Start the app
+| Layer | Choice |
+|---|---|
+| Framework | Expo SDK 57 · Expo Router (file-based nav, typed routes) |
+| Language | TypeScript strict (no `any` in the data layer) |
+| Styling | NativeWind 4 (Tailwind) with tokens in `tailwind.config.js` |
+| Storage | `expo-sqlite` (WAL, versioned migrations) + zod validation at the DB boundary |
+| State | Zustand (+ `persist` → AsyncStorage) for active baby, units, running timers |
+| Charts | `react-native-gifted-charts` (line + bar) |
+| Notifications | `expo-notifications` (daily calendar triggers, Android channel) |
+| Tests | Vitest for pure utils (age formatting boundaries, unit conversions) |
 
-   ```bash
-   npx expo start
-   ```
+## Run it
 
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+This repo uses **Bun** (`bun.lock`). Development runs through an **Expo dev build**
+(`expo-dev-client`), not Expo Go.
 
 ```bash
-npm run reset-project
+bun install
+bunx expo run:ios        # first time: builds the dev client, then boots it (or run:android)
+# afterwards:
+bunx expo start          # dev server -> open in the installed dev client
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+EAS profiles in `eas.json`: `development`, `development-simulator`, `preview`, `production`
+(`eas build -p ios --profile development-simulator` for a cloud-built dev client).
 
-### Other setup steps
+- Web: supported (`wa-sqlite` WASM asset is wired in `metro.config.js`);
+  haptics degrade gracefully.
+- Medicine reminders use local notifications; grant permission when prompted or
+  enable them later in Settings.
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+Checks:
 
-## Learn more
+```bash
+bunx tsc --noEmit     # type check (strict)
+bunx vitest run       # unit tests (age boundaries, conversions, durations)
+bunx eslint src       # eslint (expo config)
+CI=1 bunx expo export --platform web   # bundler smoke test
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+## Project structure
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```
+src/
+  app/                    # routes ONLY (Expo Router)
+    _layout.tsx           #   db init gate + theme + modal presentations
+    (tabs)/               #   Today · History · Medicines · Settings
+    log/[type].tsx        #   quick-log modal (feeding/sleep/diaper/bath/weight/medicine)
+    baby/[id]/edit.tsx    #   add/edit profile ('new' to create)
+  screens/                # screen bodies rendered by routes
+    dashboard/            #   quick-log grid, timer banners, Today timeline
+    history/              #   filters, growth chart, sleep chart, entry editor
+    log/                  #   one form component per tracker + live timer
+    medicines/            #   list + editor w/ schedule picker
+    settings/             #   units, reminders, profiles, export
+    baby-edit/
+  components/ui/          # design-system primitives (Button, Card, Chip, …)
+  components/             # profile-switcher
+  db/                     # sqlite client, migrations, zod schemas, repos,
+                          # change-bus + reactive query hooks
+  stores/                 # zustand: babies / settings / timers
+  utils/                  # age · units · datetime (pure, unit-tested), haptics
+  notifications/          # permission flow, scheduling, deep-link handler
+CONTRACTS.md              # module ownership + API contract used during the build
+```
 
-## Join the community
+## Data model
 
-Join our community of developers creating universal apps.
+Canonical storage: weights in **grams**, volumes in **milliliters**, timestamps
+as ISO-8601 UTC strings. Display units are applied at the edge via `src/utils/units`.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+```mermaid
+erDiagram
+    BABIES ||--o{ WEIGHT_ENTRIES : has
+    BABIES ||--o{ FEEDING_ENTRIES : has
+    BABIES ||--o{ SLEEP_ENTRIES : has
+    BABIES ||--o{ DIAPER_ENTRIES : has
+    BABIES ||--o{ BATH_ENTRIES : has
+    BABIES ||--o{ MEDICINES : has
+    MEDICINES ||--o{ MEDICINE_DOSE_ENTRIES : given
+
+    BABIES {
+      string id PK
+      string name
+      string photo_uri
+      string date_of_birth
+      string sex
+      real birth_weight_grams
+      real birth_length_cm
+      string created_at
+    }
+    WEIGHT_ENTRIES {
+      string id PK
+      string baby_id FK
+      string timestamp
+      real weight_grams
+      string note
+    }
+    FEEDING_ENTRIES {
+      string id PK
+      string baby_id FK
+      string timestamp
+      string mode "breast|bottle"
+      string side "left|right|both"
+      int duration_seconds
+      real amount_ml
+      string bottle_type
+      string note
+    }
+    SLEEP_ENTRIES {
+      string id PK
+      string baby_id FK
+      string start_time
+      string end_time "nullable while active"
+      string type "nap|night"
+      string note
+    }
+    DIAPER_ENTRIES {
+      string id PK
+      string baby_id FK
+      string timestamp
+      bool wet
+      bool dirty
+      string consistency
+      string note
+    }
+    BATH_ENTRIES {
+      string id PK
+      string baby_id FK
+      string timestamp
+      string note
+    }
+    MEDICINES {
+      string id PK
+      string baby_id FK
+      string name
+      real dosage
+      string unit
+      string form "drops|syrup|tablet"
+      string schedule_rule
+      string reminder_times "JSON [HH:mm]"
+    }
+    MEDICINE_DOSE_ENTRIES {
+      string id PK
+      string baby_id FK
+      string medicine_id FK
+      string timestamp
+      real amount
+      string note
+    }
+```
+
+### Reactivity without a backend
+
+Every write goes through a repository function that calls `notifyDbChanged()` after
+commit. Hooks like `useTodaySnapshot`, `useTimelineDay` and `useDbQuery` subscribe
+to that tiny event bus (`src/db/change-bus.ts`) and refetch — simple, deterministic
+offline-first reactivity with no external cache layer.
+
+### Running timers survive restarts
+
+The sleep stopwatch and the breast-feed session live in `useTimersStore`, persisted
+to AsyncStorage. Stopping a timer writes the finished entry through the normal
+repository path (with double-stop guards).
+
+## Deliberate scope decisions
+
+- WHO/CDC percentile bands are intentionally skipped; the growth view shows a clean
+  trend line with first/latest summary cards, labeled "not medical advice".
+- Dose-adherence (given vs scheduled) views are not included; dose history is listed.
+- Both can be added later without schema changes.

@@ -41,3 +41,14 @@ example
 # generated native folders
 /ios
 /android
+
+# Native build outputs (regenerable)
+ios/Pods/
+ios/build/
+android/.gradle/
+android/build/
+android/app/build/
+
+# Local artifacts
+*.apk
+littlelog-*.png
