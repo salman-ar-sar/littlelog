@@ -4,6 +4,7 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router';
 import { Stack } from 'expo-router/stack';
 import * as SplashScreen from 'expo-splash-screen';
 import { useColorScheme, View } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import {
   useFonts,
@@ -65,6 +66,7 @@ export default function RootLayout() {
   if (!ready || !fontsLoaded) return <View />;
 
   return (
+    <SafeAreaProvider>
     <ThemeProvider value={colorScheme === 'dark' ? DarkNavTheme : LightNavTheme}>
       <NotificationDeepLinkHandler />
       <Stack screenOptions={{ headerShown: false }}>
@@ -74,5 +76,6 @@ export default function RootLayout() {
       </Stack>
       <UndoToast />
     </ThemeProvider>
+    </SafeAreaProvider>
   );
 }

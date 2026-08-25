@@ -1,13 +1,17 @@
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 /** Editorial onboarding — abstract arcs and dots, one promise, one action. */
 export function LandingScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
 
   return (
-    <SafeAreaView edges={['top']} className="flex-1 bg-paper dark:bg-[#1B1916]">
+    <View
+      className="flex-1 bg-paper dark:bg-[#1B1916]"
+      style={{ paddingTop: insets.top }}
+    >
       <ScrollView
         contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 48 }}
         showsVerticalScrollIndicator={false}
@@ -52,6 +56,6 @@ export function LandingScreen() {
           Offline-first · no account needed
         </Text>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }

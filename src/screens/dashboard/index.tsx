@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import {
@@ -44,6 +45,7 @@ function useSinceLastFeed(lastFeedAt: string | null): number | null {
 /** Editorial dashboard — design 1 "Since-card". */
 export function DashboardScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const activeBabyId = useBabyStore((s) => s.activeBabyId);
   const baby = useBabyStore((s) => s.babies.find((b) => b.id === s.activeBabyId));
   const snapshot = useTodaySnapshot(activeBabyId ?? '');
@@ -55,7 +57,10 @@ export function DashboardScreen() {
   }
 
   return (
-    <View className="flex-1 bg-paper dark:bg-[#1B1916]">
+    <View
+      className="flex-1 bg-paper pt-[insets.top] dark:bg-[#1B1916]"
+      style={{ paddingTop: insets.top }}
+    >
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 32 }}
