@@ -39,6 +39,16 @@ Development build: `expo-dev-client` is installed; EAS profiles in `eas.json`
 (`development`, `development-simulator`, `preview`, `production`). Local dev =
 `bunx expo start --dev-client` after building once with `expo run:*`.
 
+Release (Android): `bun run android:release` builds split APKs
+(arm64 / arm32 / x86_64 / universal) into `android/app/build/outputs/apk/release/`.
+`bun run android:release:install` installs them. Distribution = GitHub Releases:
+pushing a tag `v*` triggers `.github/workflows/android-release.yml`, which stamps
+versionCode from the run number, builds the splits, and attaches
+`littlelog-v<version>-<abi>.apk` files to the release. JDK 17 is pinned per-machine
+in `~/.gradle/gradle.properties` (NOT in the repo - CI uses setup-java 17).
+Release APKs are signed with the committed debug keystore - fine for sideloading;
+rotate to a private keystore before any public distribution.
+
 ## Architecture
 
 - `src/app/` is **routes only** (Expo Router). Screen bodies live in `src/screens/<feature>/`.

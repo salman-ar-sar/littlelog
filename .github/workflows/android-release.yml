@@ -1,0 +1,62 @@
+name: Android Release
+
+# Builds split release APKs and attaches them to a GitHub Release.
+# Trigger: push a tag like v1.0.0
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      # Stamp versionCode/versionName from the tag so every release
+      # upgrades cleanly over the previous one.
+      - name: Stamp version from tag
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          RUN_NUMBER="${{ github.run_number }}"
+          sed -i.bak "s/versionCode [0-9]*/versionCode $RUN_NUMBER/" android/app/build.gradle
+          sed -i.bak "s/versionName \".*\"/versionName \"$TAG\"/" android/app/build.gradle
+          rm android/app/build.gradle.bak
+          echo "Building versionName=$TAG versionCode=$RUN_NUMBER"
+
+      - name: Build release APKs
+        run: cd android && ./gradlew assembleRelease --no-daemon
+
+      - name: Rename artifacts
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          OUT=android/app/build/outputs/apk/release
+          for f in "$OUT"/app-*.apk; do
+            case "$f" in
+              *arm64-v8a*) ABI="arm64" ;;
+              *armeabi-v7a*) ABI="arm32" ;;
+              *x86_64*) ABI="x86_64" ;;
+              *) ABI="universal" ;;
+            esac
+            cp "$f" "$OUT/littlelog-v${VERSION}-${ABI}.apk"
+          done
+          ls -la "$OUT"
+      - name: Upload to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            android/app/build/outputs/apk/release/littlelog-*.apk
+          generate_release_notes: true
