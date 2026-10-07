@@ -338,14 +338,17 @@ function StepperRow({
         visible={editing}
         transparent
         animationType="slide"
+        statusBarTranslucent
         onRequestClose={() => setEditing(false)}
       >
-        <View className="flex-1 justify-end">
+        <View style={StyleSheet.absoluteFill}>
           <Pressable
-            style={[StyleSheet.absoluteFillObject, { backgroundColor: 'rgba(0, 0, 0, 0.6)' }]}
+            style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(0, 0, 0, 0.6)' }]}
             accessibilityLabel="Dismiss modal"
             onPress={() => setEditing(false)}
           />
+
+          <View style={{ flex: 1, justifyContent: 'flex-end' }} pointerEvents="box-none">
 
           <View className="rounded-t-3xl border-t border-line bg-[#FAF7F2] p-5 pb-9 dark:border-[#38332B] dark:bg-[#1E1B16]">
             <View className="mb-4 flex-row items-center justify-between border-b border-line pb-3 dark:border-[#38332B]">
@@ -358,7 +361,12 @@ function StepperRow({
                 onPress={() => setEditing(false)}
                 className="rounded-full bg-peach/15 px-4 py-1.5 active:opacity-60 dark:bg-peach/25"
               >
-                <Text className="font-sans-bold text-sm text-peach dark:text-[#F5B495]">Done</Text>
+                <Text
+                  className="font-sans-bold text-sm text-peach dark:text-[#F5B495]"
+                  style={{ color: isDark ? '#F5B495' : '#C05B33' }}
+                >
+                  Done
+                </Text>
               </Pressable>
             </View>
 
@@ -396,6 +404,7 @@ function StepperRow({
                         setDraftText(String(value));
                       }
                     }}
+                    style={{ color: isDark ? '#EFEAE0' : '#262019' }}
                     className="min-w-[64px] text-center font-display-bold text-3xl text-ink dark:text-[#EFEAE0]"
                   />
                   <Text className="ml-1 text-base font-medium text-ink-soft dark:text-[#9C937F]">
@@ -474,6 +483,7 @@ function StepperRow({
                 )}
               </View>
             )}
+          </View>
           </View>
         </View>
       </Modal>

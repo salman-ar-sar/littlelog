@@ -129,14 +129,16 @@ export function DateTimeField({
           visible={activePicker !== null}
           transparent
           animationType="slide"
+          statusBarTranslucent
           onRequestClose={() => setActivePicker(null)}
         >
-          <View className="flex-1 justify-end">
+          <View style={StyleSheet.absoluteFill}>
             <Pressable
-              style={[StyleSheet.absoluteFillObject, { backgroundColor: 'rgba(0, 0, 0, 0.6)' }]}
+              style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(0, 0, 0, 0.6)' }]}
               accessibilityLabel="Dismiss picker"
               onPress={() => setActivePicker(null)}
             />
+            <View style={{ flex: 1, justifyContent: 'flex-end' }} pointerEvents="box-none">
             <View className="rounded-t-3xl border-t border-line bg-[#FAF7F2] p-4 pb-9 dark:border-[#38332B] dark:bg-[#1E1B16]">
               <View className="mb-2 flex-row items-center justify-between border-b border-line pb-3 dark:border-[#38332B]">
                 <Text className="text-base font-semibold text-ink dark:text-[#EFEAE0]">
@@ -148,7 +150,7 @@ export function DateTimeField({
                   onPress={() => setActivePicker(null)}
                   className="rounded-full bg-peach/15 px-4 py-1.5 active:opacity-60 dark:bg-peach/25"
                 >
-                  <Text className="font-sans-bold text-sm text-peach dark:text-[#F5B495]">Done</Text>
+                  <Text className="font-sans-bold text-sm text-peach dark:text-[#F5B495]" style={{ color: colorScheme === 'dark' ? '#F5B495' : '#C05B33' }}>Done</Text>
                 </Pressable>
               </View>
 
@@ -181,6 +183,7 @@ export function DateTimeField({
                   />
                 ) : null}
               </View>
+            </View>
             </View>
           </View>
         </Modal>
