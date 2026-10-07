@@ -1,6 +1,25 @@
 import { useMemo, useState } from 'react';
-import { Pressable, ScrollView, Text, useColorScheme, View } from 'react-native';
-import { Minus, Milk, Plus, Repeat, PauseCircle, PlayCircle } from 'lucide-react-native';
+import {
+  Modal,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  useColorScheme,
+  View,
+} from 'react-native';
+import {
+  Check,
+  Minus,
+  Milk,
+  Pencil,
+  Plus,
+  Repeat,
+  PauseCircle,
+  PlayCircle,
+  Star,
+} from 'lucide-react-native';
 import {
   Button,
   Chip,
@@ -212,54 +231,253 @@ function BreastTimerActive() {
   );
 }
 
+interface StepperRowProps {
+  label: string;
+  value: number;
+  onChange: (v: number) => void;
+  suffix?: string;
+  defaultValue?: number;
+  onSetDefault?: (v: number) => void;
+}
+
 function StepperRow({
   label,
   value,
   onChange,
   suffix = 'min',
-}: {
-  label: string;
-  value: number;
-  onChange: (v: number) => void;
-  suffix?: string;
-}) {
+  defaultValue,
+  onSetDefault,
+}: StepperRowProps) {
   const colorScheme = useColorScheme();
-  const iconColor = colorScheme === 'dark' ? '#EFEAE0' : '#262019';
+  const isDark = colorScheme === 'dark';
+  const iconColor = isDark ? '#EFEAE0' : '#262019';
+
+  const [editing, setEditing] = useState(false);
+  const [draftText, setDraftText] = useState(String(value));
+
+  const isDifferentFromDefault =
+    defaultValue !== undefined && onSetDefault !== undefined && defaultValue !== value;
+
+  const handleOpenEdit = () => {
+    void tap();
+    setDraftText(String(value));
+    setEditing(true);
+  };
 
   return (
-    <View className="flex-row items-center justify-between rounded-xl border border-line bg-card px-4 py-3 dark:border-[#38332B] dark:bg-[#26221D]">
-      <View>
-        <Text className="text-[11px] font-sans-bold uppercase tracking-[0.08em] text-ink-soft dark:text-[#9C937F]">
-          {label}
-        </Text>
-        <Text className="mt-0.5 font-display-semibold text-2xl text-ink dark:text-[#EFEAE0]">
-          {value} {suffix}
-        </Text>
+    <View className="rounded-xl border border-line bg-card px-4 py-3 dark:border-[#38332B] dark:bg-[#26221D]">
+      <View className="flex-row items-center justify-between">
+        <View>
+          <Text className="text-[11px] font-sans-bold uppercase tracking-[0.08em] text-ink-soft dark:text-[#9C937F]">
+            {label}
+          </Text>
+
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={`Edit ${label}: ${value} ${suffix}`}
+            onPress={handleOpenEdit}
+            className="mt-0.5 flex-row items-center gap-1.5 active:opacity-60"
+          >
+            <Text className="font-display-semibold text-2xl text-ink dark:text-[#EFEAE0]">
+              {value} {suffix}
+            </Text>
+            <View className="rounded bg-black/5 p-1 dark:bg-white/10">
+              <Pencil size={12} color={isDark ? '#9C937F' : '#8A8699'} />
+            </View>
+          </Pressable>
+        </View>
+
+        <View className="flex-row gap-2">
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={`Decrease ${label}`}
+            onPress={() => {
+              void tap();
+              onChange(Math.max(1, value - 1));
+            }}
+            className="h-12 w-12 items-center justify-center rounded-full border border-line bg-black/5 active:opacity-70 dark:border-[#38332B] dark:bg-white/10"
+          >
+            <Minus size={18} color={iconColor} />
+          </Pressable>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={`Increase ${label}`}
+            onPress={() => {
+              void tap();
+              onChange(value + 1);
+            }}
+            className="h-12 w-12 items-center justify-center rounded-full border border-line bg-black/5 active:opacity-70 dark:border-[#38332B] dark:bg-white/10"
+          >
+            <Plus size={18} color={iconColor} />
+          </Pressable>
+        </View>
       </View>
-      <View className="flex-row gap-2">
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={`Decrease ${label}`}
-          onPress={() => {
-            void tap();
-            onChange(Math.max(1, value - 1));
-          }}
-          className="h-12 w-12 items-center justify-center rounded-full border border-line bg-black/5 active:opacity-70 dark:border-[#38332B] dark:bg-white/10"
-        >
-          <Minus size={18} color={iconColor} />
-        </Pressable>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={`Increase ${label}`}
-          onPress={() => {
-            void tap();
-            onChange(value + 1);
-          }}
-          className="h-12 w-12 items-center justify-center rounded-full border border-line bg-black/5 active:opacity-70 dark:border-[#38332B] dark:bg-white/10"
-        >
-          <Plus size={18} color={iconColor} />
-        </Pressable>
-      </View>
+
+      {/* Quick option to save as default if altered via +/- on card */}
+      {isDifferentFromDefault && (
+        <View className="mt-2.5 flex-row items-center border-t border-line/60 pt-2 dark:border-[#38332B]/60">
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={`Set ${value} ${suffix} as default`}
+            onPress={() => {
+              void success();
+              onSetDefault(value);
+            }}
+            className="flex-row items-center gap-1.5 rounded-full bg-peach/10 px-2.5 py-1 active:opacity-70 dark:bg-peach/20"
+          >
+            <Star size={12} color="#F0A47E" fill="#F0A47E" />
+            <Text className="font-sans-medium text-xs text-peach">
+              Set {value} {suffix} as default
+            </Text>
+          </Pressable>
+        </View>
+      )}
+
+      {/* Editable count modal */}
+      <Modal
+        visible={editing}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setEditing(false)}
+      >
+        <View className="flex-1 justify-end">
+          <Pressable
+            style={StyleSheet.absoluteFillObject}
+            className="bg-black/60"
+            accessibilityLabel="Dismiss modal"
+            onPress={() => setEditing(false)}
+          />
+
+          <View className="rounded-t-3xl border-t border-line bg-[#FAF7F2] p-5 pb-9 dark:border-[#38332B] dark:bg-[#1E1B16]">
+            <View className="mb-4 flex-row items-center justify-between border-b border-line pb-3 dark:border-[#38332B]">
+              <Text className="text-base font-semibold text-ink dark:text-[#EFEAE0]">
+                Edit {label.toLowerCase()}
+              </Text>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Done"
+                onPress={() => setEditing(false)}
+                className="rounded-full bg-accent/15 px-4 py-1.5 active:opacity-60 dark:bg-accent/20"
+              >
+                <Text className="text-sm font-semibold text-accent">Done</Text>
+              </Pressable>
+            </View>
+
+            <View className="my-2 items-center">
+              <View className="flex-row items-center gap-4">
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel={`Decrease ${label}`}
+                  onPress={() => {
+                    void tap();
+                    const next = Math.max(1, value - 1);
+                    onChange(next);
+                    setDraftText(String(next));
+                  }}
+                  className="h-12 w-12 items-center justify-center rounded-full border border-line bg-black/5 active:opacity-70 dark:border-[#38332B] dark:bg-white/10"
+                >
+                  <Minus size={20} color={iconColor} />
+                </Pressable>
+
+                <View className="flex-row items-baseline rounded-2xl border border-line bg-card px-5 py-2.5 dark:border-[#38332B] dark:bg-[#26221D]">
+                  <TextInput
+                    value={draftText}
+                    keyboardType="number-pad"
+                    selectTextOnFocus
+                    onChangeText={(text) => {
+                      const digits = text.replace(/[^0-9]/g, '');
+                      setDraftText(digits);
+                      const num = parseInt(digits, 10);
+                      if (!isNaN(num) && num > 0) {
+                        onChange(num);
+                      }
+                    }}
+                    onBlur={() => {
+                      if (!draftText || parseInt(draftText, 10) < 1) {
+                        setDraftText(String(value));
+                      }
+                    }}
+                    className="min-w-[64px] text-center font-display-bold text-3xl text-ink dark:text-[#EFEAE0]"
+                  />
+                  <Text className="ml-1 text-base font-medium text-ink-soft dark:text-[#9C937F]">
+                    {suffix}
+                  </Text>
+                </View>
+
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel={`Increase ${label}`}
+                  onPress={() => {
+                    void tap();
+                    const next = value + 1;
+                    onChange(next);
+                    setDraftText(String(next));
+                  }}
+                  className="h-12 w-12 items-center justify-center rounded-full border border-line bg-black/5 active:opacity-70 dark:border-[#38332B] dark:bg-white/10"
+                >
+                  <Plus size={20} color={iconColor} />
+                </Pressable>
+              </View>
+
+              {/* Common presets */}
+              <View className="mt-5 flex-row gap-2">
+                {[10, 15, 18, 20, 25, 30].map((preset) => (
+                  <Pressable
+                    key={preset}
+                    onPress={() => {
+                      void tap();
+                      onChange(preset);
+                      setDraftText(String(preset));
+                    }}
+                    className={`rounded-lg px-3 py-1.5 active:opacity-70 ${
+                      value === preset
+                        ? 'bg-peach'
+                        : 'border border-line bg-black/5 dark:border-[#38332B] dark:bg-white/10'
+                    }`}
+                  >
+                    <Text
+                      className={`text-xs font-semibold ${
+                        value === preset ? 'text-white' : 'text-ink-soft dark:text-[#9C937F]'
+                      }`}
+                    >
+                      {preset}m
+                    </Text>
+                  </Pressable>
+                ))}
+              </View>
+            </View>
+
+            {/* Set as default section */}
+            {onSetDefault && (
+              <View className="mt-6 border-t border-line pt-4 dark:border-[#38332B]">
+                {defaultValue === value ? (
+                  <View className="flex-row items-center justify-center gap-1.5 py-1">
+                    <Check size={16} color="#34C759" />
+                    <Text className="text-sm font-medium text-ink-soft dark:text-[#9C937F]">
+                      {value} {suffix} is currently your default
+                    </Text>
+                  </View>
+                ) : (
+                  <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel={`Set ${value} ${suffix} as default`}
+                    onPress={() => {
+                      void success();
+                      onSetDefault(value);
+                    }}
+                    className="flex-row items-center justify-center gap-2 rounded-xl border border-peach/40 bg-peach/10 py-3 active:opacity-70 dark:border-peach/30 dark:bg-peach/15"
+                  >
+                    <Star size={16} color="#F0A47E" fill="#F0A47E" />
+                    <Text className="font-sans-semibold text-sm text-peach">
+                      Set {value} {suffix} as default
+                    </Text>
+                  </Pressable>
+                )}
+              </View>
+            )}
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -288,8 +506,11 @@ function BreastManual({
   side,
   onDone,
 }: LogFormProps & { side: 'left' | 'right' }) {
+  const defaultDuration = useSettingsStore((s) => s.defaultFeedDurationMinutes ?? 18);
+  const setDefaultDuration = useSettingsStore((s) => s.setDefaultFeedDurationMinutes);
+
   const [timestamp, setTimestamp] = useState(new Date());
-  const [minutes, setMinutes] = useState(18);
+  const [minutes, setMinutes] = useState(defaultDuration);
   const [note, setNote] = useState('');
   const [saving, setSaving] = useState(false);
 
@@ -321,7 +542,16 @@ function BreastManual({
 
   return (
     <View style={{ rowGap: 16 }}>
-      <StepperRow label="Duration" value={minutes} onChange={setMinutes} />
+      <StepperRow
+        label="Duration"
+        value={minutes}
+        onChange={setMinutes}
+        defaultValue={defaultDuration}
+        onSetDefault={(val) => {
+          setDefaultDuration(val);
+          useToastStore.getState().show(`Default duration set to ${val} min`);
+        }}
+      />
       <TimeRow value={timestamp} onChange={setTimestamp} />
       <Field label="Note (optional)">
         <TextField value={note} onChangeText={setNote} placeholder="Optional" multiline />
