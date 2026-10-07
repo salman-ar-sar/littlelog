@@ -1,7 +1,7 @@
 import type { ComponentType, ReactNode } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { X , Milk as FeedIcon, MoonStar, Baby, Bath as BathIcon, Scale, Pill } from 'lucide-react-native';
+import { X, Milk as FeedIcon, MoonStar, Baby, Bath as BathIcon, Scale, Pill } from 'lucide-react-native';
 
 import { Screen } from '@/components/ui/screen';
 import { DiaperLogForm } from '@/screens/log/diaper-form';
@@ -32,6 +32,15 @@ const ICONS: Record<string, LucideIcon> = {
   medicine: Pill,
 };
 
+const FORMS: Record<string, ComponentType<{ babyId: string; onDone: () => void }>> = {
+  feeding: FeedingLogForm,
+  sleep: SleepLogForm,
+  diaper: DiaperLogForm,
+  bath: BathLogForm,
+  weight: WeightLogForm,
+  medicine: DoseForm,
+};
+
 export default function LogModal() {
   const router = useRouter();
   const rawType = useLocalSearchParams<{ type?: string }>().type;
@@ -42,8 +51,12 @@ export default function LogModal() {
   const Form = FORMS[type];
 
   return (
-    <Screen>
-      <View className="mb-3 flex-row items-center justify-between">
+    <Screen edges={Platform.OS === 'ios' ? [] : ['top']}>
+      <View
+        className={`mb-3 flex-row items-center justify-between ${
+          Platform.OS === 'ios' ? 'pt-3' : ''
+        }`}
+      >
         <Text className="text-xl font-bold text-ink dark:text-[#EFEAE0]">
           {TITLES[type] ?? 'Log'}
         </Text>
@@ -63,41 +76,23 @@ export default function LogModal() {
             icon={Baby}
             title="No baby profile yet"
             message="Add your little one's profile first — then every log is one tap away."
-            actionLabel="Add a baby"
-            onAction={close}
+            actionLabel="Add baby profile"
+            onAction={() => router.push('/baby/new/edit')}
           />
         </ScrollView>
       ) : Form ? (
-        <FormWrapper>
-          <Form babyId={activeBabyId} onDone={close} />
-        </FormWrapper>
+        <Form babyId={activeBabyId} onDone={close} />
       ) : (
-        <EmptyState
-          icon={ICONS.diaper}
-          title="Unknown tracker"
-          message={`Nothing to log for "${type}".`}
-          actionLabel="Go back"
-          onAction={close}
-        />
+        <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
+          <EmptyState
+            icon={ICONS[type] ?? Baby}
+            title={`No form for ${type || 'this type'}`}
+            message="This logger hasn't been implemented yet. Check back soon."
+            actionLabel="Go back"
+            onAction={close}
+          />
+        </ScrollView>
       )}
     </Screen>
   );
 }
-
-function FormWrapper({ children }: { children: ReactNode }) {
-  return (
-    <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: 40 }}>
-      {children}
-    </ScrollView>
-  );
-}
-
-const FORMS: Record<string, ComponentType<{ babyId: string; onDone: () => void }>> = {
-  feeding: FeedingLogForm,
-  sleep: SleepLogForm,
-  diaper: DiaperLogForm,
-  bath: BathLogForm,
-  weight: WeightLogForm,
-  medicine: DoseForm,
-};
-

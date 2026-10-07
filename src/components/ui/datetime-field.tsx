@@ -133,8 +133,7 @@ export function DateTimeField({
         >
           <View className="flex-1 justify-end">
             <Pressable
-              style={StyleSheet.absoluteFillObject}
-              className="bg-black/60"
+              style={[StyleSheet.absoluteFillObject, { backgroundColor: 'rgba(0, 0, 0, 0.6)' }]}
               accessibilityLabel="Dismiss picker"
               onPress={() => setActivePicker(null)}
             />
@@ -147,9 +146,9 @@ export function DateTimeField({
                   accessibilityRole="button"
                   accessibilityLabel="Done"
                   onPress={() => setActivePicker(null)}
-                  className="rounded-full bg-accent/15 px-4 py-1.5 active:opacity-60 dark:bg-accent/20"
+                  className="rounded-full bg-peach/15 px-4 py-1.5 active:opacity-60 dark:bg-peach/25"
                 >
-                  <Text className="text-sm font-semibold text-accent">Done</Text>
+                  <Text className="font-sans-bold text-sm text-peach dark:text-[#F5B495]">Done</Text>
                 </Pressable>
               </View>
 
