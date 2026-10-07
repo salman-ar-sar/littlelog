@@ -60,3 +60,28 @@ export function durationText(totalSeconds: number): string {
   if (minutes > 0) return `${minutes}m`;
   return `${secs}s`;
 }
+
+/**
+ * Merges calendar day selected from a date picker into an existing Date,
+ * preserving the existing local hours, minutes, seconds, and milliseconds.
+ * Note: Android Compose DatePicker returns UTC epoch start-of-day.
+ */
+export function mergeDateFromPicker(baseDate: Date, pickerDate: Date): Date {
+  const next = new Date(baseDate);
+  next.setFullYear(
+    pickerDate.getUTCFullYear(),
+    pickerDate.getUTCMonth(),
+    pickerDate.getUTCDate(),
+  );
+  return next;
+}
+
+/**
+ * Merges local hour and minute selected from a time picker into an existing Date,
+ * preserving the existing local year, month, and day.
+ */
+export function mergeTimeFromPicker(baseDate: Date, pickerTime: Date): Date {
+  const next = new Date(baseDate);
+  next.setHours(pickerTime.getHours(), pickerTime.getMinutes(), 0, 0);
+  return next;
+}

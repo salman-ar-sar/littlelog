@@ -192,7 +192,7 @@ export function BabyEditScreen() {
           />
         </Field>
 
-        <DateTimeField label="Date of birth" value={draft.dob} onChange={(dob) => patch({ dob })} />
+        <DateTimeField label="Date of birth" value={draft.dob} onChange={(dob) => patch({ dob })} mode="date" />
 
         <Field label="Sex (optional)">
           <SegmentedControl<Sex>

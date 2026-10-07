@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { durationText, formatDayLabel, formatRelative } from './datetime';
+import {
+  durationText,
+  formatDayLabel,
+  formatRelative,
+  mergeDateFromPicker,
+  mergeTimeFromPicker,
+} from './datetime';
 
 describe('durationText', () => {
   it('formats under a minute', () => {
@@ -46,5 +52,34 @@ describe('formatDayLabel', () => {
 
   it('falls back to short date beyond yesterday', () => {
     expect(formatDayLabel(new Date(now.getTime() - 5 * 86_400_000).toISOString(), now)).toBe('Aug 19');
+  });
+});
+
+describe('mergeDateFromPicker', () => {
+  it('updates calendar date while preserving local time components', () => {
+    const base = new Date(2026, 9, 6, 14, 35, 20); // Oct 6, 2026 14:35:20 local
+    const pickerUtcMidnight = new Date(Date.UTC(2026, 9, 15, 0, 0, 0)); // Oct 15 UTC
+    const merged = mergeDateFromPicker(base, pickerUtcMidnight);
+
+    expect(merged.getFullYear()).toBe(2026);
+    expect(merged.getMonth()).toBe(9);
+    expect(merged.getDate()).toBe(15);
+    expect(merged.getHours()).toBe(14);
+    expect(merged.getMinutes()).toBe(35);
+  });
+});
+
+describe('mergeTimeFromPicker', () => {
+  it('updates local hours and minutes while preserving calendar date', () => {
+    const base = new Date(2026, 9, 6, 14, 35, 20); // Oct 6, 2026 14:35:20 local
+    const pickerTime = new Date(2026, 9, 6, 9, 45, 0); // 09:45 local
+    const merged = mergeTimeFromPicker(base, pickerTime);
+
+    expect(merged.getFullYear()).toBe(2026);
+    expect(merged.getMonth()).toBe(9);
+    expect(merged.getDate()).toBe(6);
+    expect(merged.getHours()).toBe(9);
+    expect(merged.getMinutes()).toBe(45);
+    expect(merged.getSeconds()).toBe(0);
   });
 });
