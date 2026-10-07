@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Pressable, ScrollView, Text, useColorScheme, View } from 'react-native';
 import { Minus, Milk, Plus, Repeat, PauseCircle, PlayCircle } from 'lucide-react-native';
 import {
   Button,
@@ -223,6 +223,9 @@ function StepperRow({
   onChange: (v: number) => void;
   suffix?: string;
 }) {
+  const colorScheme = useColorScheme();
+  const iconColor = colorScheme === 'dark' ? '#EFEAE0' : '#262019';
+
   return (
     <View className="flex-row items-center justify-between rounded-xl border border-line bg-card px-4 py-3 dark:border-[#38332B] dark:bg-[#26221D]">
       <View>
@@ -241,9 +244,9 @@ function StepperRow({
             void tap();
             onChange(Math.max(1, value - 1));
           }}
-          className="h-12 w-12 items-center justify-center rounded-full border border-line active:opacity-70 dark:border-[#38332B]"
+          className="h-12 w-12 items-center justify-center rounded-full border border-line bg-black/5 active:opacity-70 dark:border-[#38332B] dark:bg-white/10"
         >
-          <Minus size={18} color="#262019" />
+          <Minus size={18} color={iconColor} />
         </Pressable>
         <Pressable
           accessibilityRole="button"
@@ -252,9 +255,9 @@ function StepperRow({
             void tap();
             onChange(value + 1);
           }}
-          className="h-12 w-12 items-center justify-center rounded-full border border-line active:opacity-70 dark:border-[#38332B]"
+          className="h-12 w-12 items-center justify-center rounded-full border border-line bg-black/5 active:opacity-70 dark:border-[#38332B] dark:bg-white/10"
         >
-          <Plus size={18} color="#262019" />
+          <Plus size={18} color={iconColor} />
         </Pressable>
       </View>
     </View>
